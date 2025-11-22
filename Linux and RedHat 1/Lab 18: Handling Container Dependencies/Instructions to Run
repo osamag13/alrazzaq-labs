@@ -1,0 +1,21 @@
+##Build + start everything:##
+
+podman-compose up --build -d
+
+##Check logs:##
+
+podman-compose logs -f
+
+##Check health:##
+
+podman inspect --format='{{.State.Health.Status}}' container-dependencies-lab_db_1
+
+##Restart everything:##
+
+podman-compose down
+podman-compose up --build -d
+
+##Cleanup:##
+
+podman-compose down
+podman system prune -f
