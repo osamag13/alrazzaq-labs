@@ -1,0 +1,11 @@
+podman-compose down
+podman-compose build --no-cache
+podman-compose up -d
+podman-compose down
+podman secret rm db_password
+podman rmi flask-app
+curl http://localhost:5000
+curl http://localhost:5000/data
+podman logs flask-microservice-lab_web_1
+podman ps
+podman ps -a
