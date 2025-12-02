@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Web Server Service
+  webserver:
+    image: nginx:alpine
+    container_name: compose-webserver
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web/html:/usr/share/nginx/html:ro
+    depends_on:
+      - database
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Database Service
+  database:
+    image: mysql:8.0
+    container_name: compose-database
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword123
+      MYSQL_DATABASE: sampleapp
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword123
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+    restart: unless-stopped
+
+# Define named volumes
+volumes:
+  mysql-data:
+    driver: local
+
+# Define custom networks
+networks:
+  app-network:
+    driver: bridge
