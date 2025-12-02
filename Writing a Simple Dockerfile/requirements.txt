@@ -1,0 +1,2 @@
+# No external dependencies required for this simple app
+# This file is included as a best practice for Python projects
