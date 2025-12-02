@@ -1,0 +1,50 @@
+# Create index.html file
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Compose Lab</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .info {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Docker Compose Lab!</h1>
+        <div class="info">
+            <h3>Multi-Container Application</h3>
+            <p>This web page is served by an Nginx container, which is part of a multi-container application managed by Docker Compose.</p>
+            <p><strong>Services Running:</strong></p>
+            <ul>
+                <li>Web Server: Nginx (Port 8080)</li>
+                <li>Database: MySQL (Port 3306)</li>
+            </ul>
+        </div>
+        <p>Congratulations! You have successfully deployed a multi-container application using Docker Compose.</p>
+    </div>
+</body>
+</html>
