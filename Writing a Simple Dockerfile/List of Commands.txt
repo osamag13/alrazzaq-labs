@@ -1,0 +1,100 @@
+    1  mkdir ~/docker-python-app
+    2  cd ~/docker-python-app
+    3  mkdir app
+    4  ls -la
+    5  cd app
+    6  nano app.py
+    7  nano requirements.txt
+    8  cd ~/docker-python-app
+    9  nano Dockerfile
+   10  # Use official Python runtime as base image
+   11  FROM python:3.11-slim
+   12  # Set metadata for the image
+   13  LABEL maintainer="student@alnafi.com"
+   14  LABEL description="Simple Python web application for Docker learning"
+   15  LABEL version="1.0"
+   16  # Set working directory inside the container
+   17  WORKDIR /usr/src/app
+   18  # Copy requirements file first (for better layer caching)
+   19  COPY app/requirements.txt ./
+   20  # Install Python dependencies (if any)
+   21  RUN pip install --no-cache-dir -r requirements.txt
+   22  # Copy application code
+   23  COPY app/ .
+   24  # Make the Python script executable
+   25  RUN chmod +x app.py
+   26  # Expose the port the app runs on
+   27  EXPOSE 8080
+   28  # Define the command to run the application
+   29  CMD ["python", "app.py"]
+   30  # Use official Python runtime as base image
+   31  FROM python:3.11-slim
+   32  # Set metadata for the image
+   33  LABEL maintainer="student@alnafi.com"
+   34  LABEL description="Simple Python web application for Docker learning"
+   35  LABEL version="1.0"
+   36  # Set working directory inside the container
+   37  WORKDIR /usr/src/app
+   38  # Copy requirements file first (for better layer caching)
+   39  COPY app/requirements.txt ./
+   40  # Install Python dependencies (if any)
+   41  RUN pip install --no-cache-dir -r requirements.txt
+   42  # Copy application code
+   43  COPY app/ .
+   44  # Make the Python script executable
+   45  RUN chmod +x app.py
+   46  # Expose the port the app runs on
+   47  EXPOSE 8080
+   48  # Define the command to run the application
+   49  CMD ["python", "app.py"]
+   50  find ~/docker-python-app -type f -exec ls -la {} \;
+   51  cd ~/docker-python-app
+   52  docker build -t myimage .
+   53  docker images
+   54  # Look specifically for your image
+   55  docker images myimage
+   56  docker inspect myimage
+   57  # View the image history (layers)
+   58  docker history myimage
+   59  docker run -d -p 8080:8080 --name my-python-app myimage
+   60  # Verify the container is running
+   61  docker ps
+   62  curl http://localhost:8080
+   63  docker logs my-python-app
+   64  # Follow logs in real-time
+   65  docker logs -f my-python-app
+   66  docker exec -it my-python-app bash
+   67  docker stop my-python-app
+   68  # Remove the container
+   69  docker rm my-python-app
+   70  # Verify removal
+   71  docker ps -a
+   72  cd ~/docker-python-app/app
+   73  # Create a backup of the original app
+   74  cp app.py app.py.backup
+   75  # Edit the application to use more environment variables
+   76  nano app.py
+   77  cd ~/docker-python-app
+   78  # Create a backup of the original Dockerfile
+   79  cp Dockerfile Dockerfile.backup
+   80  # Edit the Dockerfile
+   81  nano Dockerfile
+   82  nano docker-compose.yml
+   83  docker build -t myimage:v2 .
+   84  docker build -t myimage:latest .
+   85  docker images myimage
+   86  docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}\t{{.CreatedAt}}"
+   87  docker run -d -p 8080:8080 --name my-python-app-v2 myimage:v2
+   88  docker ps
+   89  curl http://localhost:8080
+   90  curl -s http://localhost:8080 | python3 -m json.tool
+   91  docker stop my-python-app-v2
+   92  docker run -d -p 8081:8080   --name my-python-app-custom   -e APP_NAME="Custom Docker App"   -e APP_VERSION="3.0.0"   -e ENVIRONMENT="development"   -e DEBUG="true"   myimage:v2
+   93  curl http://localhost:8081
+   94  docker run -d -p 8082:8080   --name production-app   -e APP_NAME="Production App"   -e ENVIRONMENT="production"   -e DEBUG="false"   myimage:v2
+   95  docker run -d -p 8083:8080   --name development-app   -e APP_NAME="Development App"   -e ENVIRONMENT="development"   -e DEBUG="true"   myimage:v2
+   96  echo "Production App Response:"
+   97  curl -s http://localhost:8082 | python3 -m json.tool
+   98  echo -e "\nDevelopment App Response:"
+   99  curl -s http://localhost:8083 | python3 -m json.tool
+  100  docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"
