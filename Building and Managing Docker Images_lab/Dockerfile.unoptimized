@@ -1,0 +1,28 @@
+FROM ubuntu:20.04
+
+# Update package list
+RUN apt-get update
+
+# Install nginx
+RUN apt-get install -y nginx
+
+# Install curl for testing
+RUN apt-get install -y curl
+
+# Install vim for editing
+RUN apt-get install -y vim
+
+# Clean package cache
+RUN apt-get clean
+
+# Remove default nginx page
+RUN rm /var/www/html/index.nginx-debian.html
+
+# Copy our HTML file
+COPY index.html /var/www/html/
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
