@@ -1,0 +1,85 @@
+# Define stages for the pipeline
+stages:
+  - build
+  - test
+  - security
+  - deploy
+
+# Global variables
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+# Services needed for Docker-in-Docker
+services:
+  - docker:24-dind
+
+# Before script to login to GitLab Container Registry
+before_script:
+  - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+
+# Build stage - Build Docker image
+build_image:
+  stage: build
+  image: docker:24
+  script:
+    - echo "Building Docker image..."
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker build -t $IMAGE_NAME:latest .
+    - echo "Pushing image to registry..."
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+    - docker push $IMAGE_NAME:latest
+  only:
+    - main
+    - develop
+
+# Test stage - Run basic tests
+test_application:
+  stage: test
+  image: docker:24
+  script:
+    - echo "Running application tests..."
+    - docker run --rm $IMAGE_NAME:$IMAGE_TAG npm test
+    - echo "Testing container health..."
+    - docker run -d --name test-container -p 3000:3000 $IMAGE_NAME:$IMAGE_TAG
+    - sleep 10
+    - docker exec test-container curl -f http://localhost:3000/health || exit 1
+    - docker stop test-container
+    - docker rm test-container
+  dependencies:
+    - build_image
+  only:
+    - main
+    - develop
+
+# Security stage - Vulnerability scanning (placeholder)
+security_scan:
+  stage: security
+  image: docker:24
+  script:
+    - echo "Running security scan..."
+    - echo "Checking image for vulnerabilities..."
+    # This is a placeholder - we'll implement actual scanning later
+    - docker run --rm $IMAGE_NAME:$IMAGE_TAG echo "Security scan completed"
+  dependencies:
+    - build_image
+  only:
+    - main
+
+# Deploy stage - Deploy to staging
+deploy_staging:
+  stage: deploy
+  image: docker:24
+  script:
+    - echo "Deploying to staging environment..."
+    - echo "Image $IMAGE_NAME:$IMAGE_TAG deployed successfully"
+  environment:
+    name: staging
+    url: http://staging.example.com
+  dependencies:
+    - test_application
+    - security_scan
+  only:
+    - main
